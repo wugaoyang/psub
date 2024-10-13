@@ -2920,7 +2920,9 @@ var src_default = {
         const host = url.origin;
         const frontendUrl = 'https://raw.githubusercontent.com/wugaoyang/psub/main/frontend.html';
         const SUB_BUCKET = env.SUB_BUCKET;
-        let backend = env.BACKEND.replace(/(https?:\/\/[^/]+).*$/, "$1");
+
+        let backend1 = env.BACKEND || "http://localhost:8081";
+        let backend = backend1.replace(/(https?:\/\/[^/]+).*$/, "$1");
         const subDir = "subscription";
         const pathSegments = url.pathname.split("/").filter((segment) => segment.length > 0);
         if (pathSegments.length === 0) {
@@ -2952,6 +2954,7 @@ var src_default = {
         }
 
         const urlParam = url.searchParams.get("url");
+        console.log("urlParam", urlParam)
         if (!urlParam){
             return new Response("Missing URL parameter", { status: 400 });
         }
@@ -2974,22 +2977,20 @@ var src_default = {
             }
         } else {
             const urlParts = urlParam.split("|").filter((part) => part.trim() !== "");
+            console.log("urlParts", urlParts)
             if (urlParts.length === 0)
                 return new Response("There are no valid links", { status: 400 });
             let response, parsedObj;
             for (const url2 of urlParts) {
                 const key = generateRandomStr(11);
                 if (url2.startsWith("https://") || url2.startsWith("http://")) {
-                    response = await fetch(url2, {
-                        method: request.method,
-                        headers: request.headers,
-                        redirect: 'follow', // https://developers.cloudflare.com/workers/runtime-apis/request#constructor
-                    });
+                    response = await fetch(url2);
                     if (!response.ok)
                         continue;
                     const plaintextData = await response.text();
                     parsedObj = parseData(plaintextData);
-                    await SUB_BUCKET.put(key + "_headers", JSON.stringify(Object.fromEntries(response.headers)));
+                    console.log(url2, plaintextData)
+                    // await SUB_BUCKET.put(key + "_headers", JSON.stringify(Object.fromEntries(response.headers)));
                     keys.push(key);
                 } else {
                     parsedObj = parseData(url2);
@@ -3023,12 +3024,16 @@ var src_default = {
                 }
             }
         }
+
         const newUrl = replacedURIs.join("|");
+        if(!newUrl){
+            return new Response();
+        }
         url.searchParams.set("url", newUrl);
         const modifiedRequest = new Request(backend + url.pathname + url.search, request);
         const rpResponse = await fetch(modifiedRequest);
         for (const key of keys) {
-            await SUB_BUCKET.delete(key);
+            // await SUB_BUCKET.delete(key);
         }
         if (rpResponse.status === 200) {
             const plaintextData = await rpResponse.text();
