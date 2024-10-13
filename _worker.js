@@ -2921,7 +2921,7 @@ var src_default = {
     const frontendUrl = 'https://raw.githubusercontent.com/wugaoyang/psub/main/frontend.html';
     const SUB_BUCKET = env.SUB_BUCKET;
     let backend = env.BACKEND.replace(/(https?:\/\/[^/]+).*$/, "$1");
-    const subDir = "sub";
+    const subDir = "subscription";
     const pathSegments = url.pathname.split("/").filter((segment) => segment.length > 0);
     if (pathSegments.length === 0) {
       const response = await fetch(frontendUrl);
