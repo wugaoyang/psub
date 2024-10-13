@@ -2953,7 +2953,7 @@ var src_default = {
             }
         }
 
-        // const urlParam = url.searchParams.get("url");
+        const urlParam = url.searchParams.get("url");
         // if (!urlParam){
         //     return new Response("Missing URL parameter", { status: 400 });
         // }
