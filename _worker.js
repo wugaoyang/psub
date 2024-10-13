@@ -2919,8 +2919,9 @@ var src_default = {
     const url = new URL(request.url);
     const host = url.origin;
     const frontendUrl = 'https://raw.githubusercontent.com/wugaoyang/psub/main/frontend.html';
-    const SUB_BUCKET = env.SUB_BUCKET;
-    let backend = env.BACKEND.replace(/(https?:\/\/[^/]+).*$/, "$1");
+    const SUB_BUCKET = env.SUB_BUCKET || new Map();
+    let backend1 = env.BACKEND || "https://api.wcc.best";
+    let backend = backend1.replace(/(https?:\/\/[^/]+).*$/, "$1");
     const subDir = "subscription";
     const pathSegments = url.pathname.split("/").filter((segment) => segment.length > 0);
     if (pathSegments.length === 0) {
@@ -2980,13 +2981,15 @@ var src_default = {
       for (const url2 of urlParts) {
         const key = generateRandomStr(11);
         if (url2.startsWith("https://") || url2.startsWith("http://")) {
+          console.log("开始请求", url2, request.method ,  request.headers)
           response = await fetch(url2, {
             method: request.method,
             headers: request.headers,
             redirect: 'follow', // https://developers.cloudflare.com/workers/runtime-apis/request#constructor
           });
-          if (!response.ok)
+          if (!response.ok){
             continue;
+          }
           const plaintextData = await response.text();
           parsedObj = parseData(plaintextData);
           await SUB_BUCKET.put(key + "_headers", JSON.stringify(Object.fromEntries(response.headers)));
@@ -3264,9 +3267,11 @@ function generateRandomUUID() {
   });
 }
 function parseData(data) {
+  console.log(data)
   try {
-    return { format: "base64", data: urlSafeBase64Decode(data) };
+    return { format: "base64", data: atob(data) };
   } catch (base64Error) {
+    console.log(base64Error)
     try {
       return { format: "yaml", data: yaml.load(data) };
     } catch (yamlError) {
