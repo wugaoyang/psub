@@ -3168,6 +3168,8 @@ var src_default = {
                         keys.push(key);
                         replacedURIs.push(`${host}/${subDir}/${key}`);
                     }
+                }else{
+                    await SUB_BUCKET.put(key, parsedObj);
                 }
             }
         }
