@@ -2953,11 +2953,10 @@ var src_default = {
             }
         }
 
-        const urlParam = url.searchParams.get("url");
-        console.log("urlParam", urlParam)
-        if (!urlParam){
-            return new Response("Missing URL parameter", { status: 400 });
-        }
+        // const urlParam = url.searchParams.get("url");
+        // if (!urlParam){
+        //     return new Response("Missing URL parameter", { status: 400 });
+        // }
         const backendParam = url.searchParams.get("bd");
         if (backendParam && /^(https?:\/\/[^/]+)[.].+$/g.test(backendParam))
             backend = backendParam.replace(/(https?:\/\/[^/]+).*$/, "$1");
@@ -2977,19 +2976,21 @@ var src_default = {
             }
         } else {
             const urlParts = urlParam.split("|").filter((part) => part.trim() !== "");
-            console.log("urlParts", urlParts)
             if (urlParts.length === 0)
                 return new Response("There are no valid links", { status: 400 });
             let response, parsedObj;
             for (const url2 of urlParts) {
                 const key = generateRandomStr(11);
                 if (url2.startsWith("https://") || url2.startsWith("http://")) {
-                    response = await fetch(url2);
+                    response = await fetch(url2, {
+                        method: request.method,
+                        headers: request.headers,
+                        redirect: 'follow', // https://developers.cloudflare.com/workers/runtime-apis/request#constructor
+                    });
                     if (!response.ok)
                         continue;
                     const plaintextData = await response.text();
                     parsedObj = parseData(plaintextData);
-                    console.log(url2, plaintextData)
                     // await SUB_BUCKET.put(key + "_headers", JSON.stringify(Object.fromEntries(response.headers)));
                     keys.push(key);
                 } else {
@@ -3024,11 +3025,7 @@ var src_default = {
                 }
             }
         }
-
         const newUrl = replacedURIs.join("|");
-        if(!newUrl){
-            return new Response();
-        }
         url.searchParams.set("url", newUrl);
         const modifiedRequest = new Request(backend + url.pathname + url.search, request);
         const rpResponse = await fetch(modifiedRequest);
