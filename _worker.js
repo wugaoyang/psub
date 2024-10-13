@@ -3178,7 +3178,7 @@ var src_default = {
         for (const key of keys) {
             // await SUB_BUCKET.delete(key);
         }
-        return rpResponse;
+        return rpResponse + "==+++++++++====";
         // if (rpResponse.status === 200) {
         //     const plaintextData = await rpResponse.text();
         //     try {
