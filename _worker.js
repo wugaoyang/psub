@@ -3178,29 +3178,28 @@ var src_default = {
         for (const key of keys) {
             // await SUB_BUCKET.delete(key);
         }
-        return rpResponse + "==+++++++++====";
-        // if (rpResponse.status === 200) {
-        //     const plaintextData = await rpResponse.text();
-        //     try {
-        //         const decodedData = urlSafeBase64Decode(plaintextData);
-        //         const links = decodedData.split(/\r?\n/).filter((link) => link.trim() !== "");
-        //         const newLinks = [];
-        //         for (const link of links) {
-        //             const newLink = replaceInUri(link, replacements, true);
-        //             if (newLink)
-        //                 newLinks.push(newLink);
-        //         }
-        //         const replacedBase64Data = btoa(newLinks.join("\r\n"));
-        //         return new Response(replacedBase64Data, rpResponse);
-        //     } catch (base64Error) {
-        //         const result = plaintextData.replace(
-        //             new RegExp(Object.keys(replacements).join("|"), "g"),
-        //             (match) => replacements[match] || match
-        //         );
-        //         return new Response(result, rpResponse);
-        //     }
-        // }
-        // return rpResponse;
+        if (rpResponse.status === 200) {
+            const plaintextData = await rpResponse.text();
+            try {
+                const decodedData = urlSafeBase64Decode(plaintextData);
+                const links = decodedData.split(/\r?\n/).filter((link) => link.trim() !== "");
+                const newLinks = [];
+                for (const link of links) {
+                    const newLink = replaceInUri(link, replacements, true);
+                    if (newLink)
+                        newLinks.push(newLink);
+                }
+                const replacedBase64Data = btoa(newLinks.join("\r\n"));
+                return new Response(replacedBase64Data, rpResponse);
+            } catch (base64Error) {
+                const result = plaintextData.replace(
+                    new RegExp(Object.keys(replacements).join("|"), "g"),
+                    (match) => replacements[match] || match
+                );
+                return new Response(result, rpResponse);
+            }
+        }
+        return rpResponse;
     }
 };
 
