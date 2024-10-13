@@ -2918,10 +2918,10 @@ var src_default = {
   async fetch(request, env) {
     const url = new URL(request.url);
     const host = url.origin;
-    const frontendUrl = 'https://raw.githubusercontent.com/bulianglin/psub/main/frontend.html';
+    const frontendUrl = 'https://raw.githubusercontent.com/wugaoyang/psub/main/frontend.html';
     const SUB_BUCKET = env.SUB_BUCKET;
     let backend = env.BACKEND.replace(/(https?:\/\/[^/]+).*$/, "$1");
-    const subDir = "subscription";
+    const subDir = "sub";
     const pathSegments = url.pathname.split("/").filter((segment) => segment.length > 0);
     if (pathSegments.length === 0) {
       const response = await fetch(frontendUrl);
@@ -2952,8 +2952,9 @@ var src_default = {
     }
 
     const urlParam = url.searchParams.get("url");
-    if (!urlParam)
+    if (!urlParam){
       return new Response("Missing URL parameter", { status: 400 });
+    }
     const backendParam = url.searchParams.get("bd");
     if (backendParam && /^(https?:\/\/[^/]+)[.].+$/g.test(backendParam))
       backend = backendParam.replace(/(https?:\/\/[^/]+).*$/, "$1");
