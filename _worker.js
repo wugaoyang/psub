@@ -3179,7 +3179,7 @@ var src_default = {
         const modifiedRequest = new Request(backend + url.pathname + url.search, request);
         const rpResponse = await fetch(modifiedRequest);
         for (const key of keys) {
-            await SUB_BUCKET.delete(key);
+            // await SUB_BUCKET.delete(key);
         }
         if (rpResponse.status === 200) {
             const plaintextData = await rpResponse.text();
