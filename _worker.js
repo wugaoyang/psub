@@ -3069,7 +3069,7 @@ var src_default = {
         const url = new URL(request.url);
         const host = url.origin;
         const frontendUrl = 'https://raw.githubusercontent.com/wugaoyang/psub/main/frontend.html';
-        const SUB_BUCKET = env.SUB_BUCKET || new Map();
+        const SUB_BUCKET = env.SUB_BUCKET;
         let backend1 = env.BACKEND || "https://api.wcc.best";
         let backend = backend1.replace(/(https?:\/\/[^/]+).*$/, "$1");
         const subDir = "subscription";
@@ -3146,6 +3146,7 @@ var src_default = {
                     const newLink = replaceInUri(url2, replacements, false);
                     if (newLink)
                         replacedURIs.push(newLink);
+                    await SUB_BUCKET.put(key, parsedObj);
                     continue;
                 } else if ("base64" === parsedObj.format) {
                     const links = parsedObj.data.split(/\r?\n/).filter((link) => link.trim() !== "");
