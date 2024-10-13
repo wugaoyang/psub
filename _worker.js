@@ -2991,7 +2991,8 @@ var src_default = {
                         if (newLink)
                             newLinks.push(newLink);
                     }
-                    const replacedBase64Data = btoa(newLinks.join("\r\n"));
+                    // const replacedBase64Data = btoa(newLinks.join("\r\n"));
+                    const replacedBase64Data = newLinks.join("\r\n");
                     if (replacedBase64Data) {
                         await SUB_BUCKET.put(key, replacedBase64Data);
                         keys.push(key);
@@ -3012,7 +3013,7 @@ var src_default = {
         const modifiedRequest = new Request(backend + url.pathname + url.search, request);
         const rpResponse = await fetch(modifiedRequest);
         for (const key of keys) {
-            await SUB_BUCKET.delete(key);
+            // await SUB_BUCKET.delete(key);
         }
         if (rpResponse.status === 200) {
             const plaintextData = await rpResponse.text();
