@@ -3137,7 +3137,7 @@ var src_default = {
                     }
                     const plaintextData = await response.text();
                     parsedObj = parseData(plaintextData);
-                    await SUB_BUCKET.put(key, parsedObj);
+                    // await SUB_BUCKET.put(key, parsedObj);
                     await SUB_BUCKET.put(key + "_headers", JSON.stringify(Object.fromEntries(response.headers)));
                     keys.push(key);
                 } else {
