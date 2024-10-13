@@ -2981,14 +2981,13 @@ var src_default = {
       for (const url2 of urlParts) {
         const key = generateRandomStr(11);
         if (url2.startsWith("https://") || url2.startsWith("http://")) {
-          console.log("开始请求", url2, request.method ,  request.headers)
           response = await fetch(url2);
           if (!response.ok){
             continue;
           }
           const plaintextData = await response.text();
           parsedObj = parseData(plaintextData);
-          await SUB_BUCKET.put(key + "_headers", JSON.stringify(Object.fromEntries(response.headers)));
+          // await SUB_BUCKET.put(key + "_headers", JSON.stringify(Object.fromEntries(response.headers)));
           keys.push(key);
         } else {
           parsedObj = parseData(url2);
@@ -3263,11 +3262,9 @@ function generateRandomUUID() {
   });
 }
 function parseData(data) {
-  console.log(data)
   try {
     return { format: "base64", data: atob(data) };
   } catch (base64Error) {
-    console.log(base64Error)
     try {
       return { format: "yaml", data: yaml.load(data) };
     } catch (yamlError) {
