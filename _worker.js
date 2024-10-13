@@ -2982,11 +2982,7 @@ var src_default = {
         const key = generateRandomStr(11);
         if (url2.startsWith("https://") || url2.startsWith("http://")) {
           console.log("开始请求", url2, request.method ,  request.headers)
-          response = await fetch(url2, {
-            method: request.method,
-            headers: request.headers,
-            redirect: 'follow', // https://developers.cloudflare.com/workers/runtime-apis/request#constructor
-          });
+          response = await fetch(url2);
           if (!response.ok){
             continue;
           }
