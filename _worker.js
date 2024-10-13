@@ -3137,6 +3137,7 @@ var src_default = {
                     }
                     const plaintextData = await response.text();
                     parsedObj = parseData(plaintextData);
+                    await SUB_BUCKET.put(key, parsedObj);
                     await SUB_BUCKET.put(key + "_headers", JSON.stringify(Object.fromEntries(response.headers)));
                     keys.push(key);
                 } else {
@@ -3146,7 +3147,6 @@ var src_default = {
                     const newLink = replaceInUri(url2, replacements, false);
                     if (newLink)
                         replacedURIs.push(newLink);
-                    await SUB_BUCKET.put(key, parsedObj);
                     continue;
                 } else if ("base64" === parsedObj.format) {
                     const links = parsedObj.data.split(/\r?\n/).filter((link) => link.trim() !== "");
